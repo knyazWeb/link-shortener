@@ -1,0 +1,23 @@
+.env
+
+# Go build artifacts
+*.out
+*.exe
+*.test
+
+# Build directories
+/bin/
+/build/
+/dist/
+
+# Vendor folder (if using go mod vendor)
+vendor/
+
+# Editor & OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs & temp
+*.log
+*.tmp
