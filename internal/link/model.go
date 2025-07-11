@@ -1,16 +1,21 @@
 package link
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"gorm.io/gorm"
+)
 
 type Link struct {
+	gorm.Model
 	Url  string `json:"url"`
-	Hash string `json:"hash"`
+	Hash string `json:"hash" gorm:"uniqueIndex"`
 }
 
 func NewLink(url string) *Link {
 	return &Link{
 		Url:  url,
-		Hash: "",
+		Hash: RandStringRunes(6),
 	}
 }
 
