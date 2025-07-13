@@ -47,7 +47,18 @@ func (handler *LinkHandler) Create() http.HandlerFunc {
 }
 
 func (handler *LinkHandler) GoTo() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+	return func(w http.ResponseWriter, r *http.Request) {
+		hash := r.PathValue("hash")
+
+		link, err := handler.LinkRepository.FindLinkByHash(hash)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
+	}
 }
 
 func (handler *LinkHandler) Delete() http.HandlerFunc {
