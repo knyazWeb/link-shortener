@@ -4,6 +4,9 @@ import (
 	"go/http/pkg/request"
 	"go/http/pkg/response"
 	"net/http"
+	"strconv"
+
+	"gorm.io/gorm"
 )
 
 type LinkHandlerDeps struct {
@@ -26,7 +29,32 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 }
 
 func (handler *LinkHandler) Update() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := request.HandleBody[LinkUpdateRequest](w, r)
+		if err != nil {
+			return
+		}
+		idString := r.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		result, err := handler.LinkRepository.Update(&Link{
+			Model: gorm.Model{
+				ID: uint(id),
+			},
+			Url:  body.Url,
+			Hash: body.Hash,
+		})
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		response.Json(w, result, http.StatusCreated)
+
+	}
 }
 
 func (handler *LinkHandler) Create() http.HandlerFunc {
@@ -49,6 +77,7 @@ func (handler *LinkHandler) Create() http.HandlerFunc {
 		createdLink, err := handler.LinkRepository.Create(link)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		response.Json(w, createdLink, http.StatusOK)
