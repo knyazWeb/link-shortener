@@ -100,5 +100,28 @@ func (handler *LinkHandler) GoTo() http.HandlerFunc {
 }
 
 func (handler *LinkHandler) Delete() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+	return func(w http.ResponseWriter, r *http.Request) {
+		idString := r.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		link, _ := handler.LinkRepository.FindLinkById(uint(id))
+
+		if link == nil {
+			http.Error(w, "no link in database", http.StatusBadRequest)
+			return
+		}
+
+		err = handler.LinkRepository.Delete(uint(id))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		response.Json(w, nil, http.StatusOK)
+
+	}
 }
