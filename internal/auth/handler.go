@@ -9,15 +9,18 @@ import (
 
 type AuthHandlerDeps struct {
 	*configs.Config
+	*AuthService
 }
 
 type AuthHandler struct {
 	*configs.Config
+	*AuthService
 }
 
 func NewAuthHandler(router *http.ServeMux, deps AuthHandlerDeps) {
 	handler := &AuthHandler{
-		Config: deps.Config,
+		Config:      deps.Config,
+		AuthService: deps.AuthService,
 	}
 	router.HandleFunc("POST /auth/login", handler.Login())
 	router.HandleFunc("POST /auth/register", handler.Register())
@@ -41,15 +44,16 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 
 func (handler *AuthHandler) Register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, err := request.HandleBody[RegisterRequest](w, r)
+		body, err := request.HandleBody[RegisterRequest](w, r)
 		if err != nil {
 			return
 		}
 
-		res := RegisterResponse{
-			Token: "123",
+		email, err := handler.AuthService.Register(body.Name, body.Email, body.Password)
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+			return
 		}
-
-		response.Json(w, res, http.StatusOK)
+		response.Json(w, email, http.StatusOK)
 	}
 }

@@ -13,7 +13,7 @@ func Logging(next http.Handler) http.Handler {
 			ResponseWriter: w,
 			StatusCode:     0,
 		}
-		log.Println(wrapper.StatusCode, r.Method, r.URL.Path, time.Since(start))
 		next.ServeHTTP(wrapper, r)
+		log.Println(wrapper.StatusCode, r.Method, r.URL.Path, time.Since(start))
 	})
 }
