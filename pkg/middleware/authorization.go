@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"go/http/configs"
+	"go/http/pkg/jwt"
 	"log"
 	"net/http"
 	"strings"
 )
 
-func BearerToken(next http.Handler) http.Handler {
+func IsAuthed(next http.Handler, config *configs.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		authorizationHeader := r.Header.Get("Authorization")
@@ -24,6 +26,9 @@ func BearerToken(next http.Handler) http.Handler {
 		}
 		token := splitedHeader[1]
 		log.Println(token)
+		isValid, data := jwt.NewJWT(config.Auth.Secret).Parse(token)
+		log.Println(isValid)
+		log.Println(data)
 		next.ServeHTTP(w, r)
 	})
 }
