@@ -1,6 +1,7 @@
 package link
 
 import (
+	"fmt"
 	"go/http/configs"
 	"go/http/pkg/middleware"
 	"go/http/pkg/request"
@@ -33,6 +34,7 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 
 func (handler *LinkHandler) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.Context().Value(middleware.ContextEmailKey).(string))
 		body, err := request.HandleBody[LinkUpdateRequest](w, r)
 		if err != nil {
 			return
