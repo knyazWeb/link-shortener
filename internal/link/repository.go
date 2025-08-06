@@ -70,3 +70,16 @@ func (repo *LinkRepository) FindLinkById(Id uint) (*Link, error) {
 
 	return &link, nil
 }
+
+func (repo *LinkRepository) Count() (count int64) {
+	repo.Database.Table("links").Where("deleted at is null").Count(&count)
+
+	return
+}
+
+func (repo *LinkRepository) GetAll(limit, offset int) (links []Link) {
+	repo.Database.Table("links").Where("deleted_at is null").Order("id asc").Limit(limit).Offset(offset).Scan(&links)
+
+	return
+
+}
