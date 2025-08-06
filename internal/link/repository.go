@@ -72,7 +72,7 @@ func (repo *LinkRepository) FindLinkById(Id uint) (*Link, error) {
 }
 
 func (repo *LinkRepository) Count() (count int64) {
-	repo.Database.Table("links").Where("deleted at is null").Count(&count)
+	repo.Database.Table("links").Where("deleted_at is null").Count(&count)
 
 	return
 }
