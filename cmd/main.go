@@ -14,13 +14,13 @@ import (
 
 func main() {
 	conf := configs.LoadConfig()
-	db := db.NewDb(conf)
+	database := db.NewDb(conf)
 	router := http.NewServeMux()
 
 	// Repositories
-	linkRepository := link.NewLinkRepository(db)
-	userRepository := user.NewUserRepository(db)
-	statRepository := stat.NewStatRepository(db)
+	linkRepository := link.NewLinkRepository(database)
+	userRepository := user.NewUserRepository(database)
+	statRepository := stat.NewStatRepository(database)
 
 	// Services
 	authService := auth.NewAuthService(userRepository)
