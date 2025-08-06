@@ -3,6 +3,7 @@ package link
 import (
 	"fmt"
 	"go/http/configs"
+	"go/http/pkg/di"
 	"go/http/pkg/middleware"
 	"go/http/pkg/request"
 	"go/http/pkg/response"
@@ -14,16 +15,19 @@ import (
 
 type LinkHandlerDeps struct {
 	LinkRepository *LinkRepository
+	StatRepository di.IStatRepository
 	Config         *configs.Config
 }
 
 type LinkHandler struct {
 	LinkRepository *LinkRepository
+	StatRepository di.IStatRepository
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	handler := &LinkHandler{
 		LinkRepository: deps.LinkRepository,
+		StatRepository: deps.StatRepository,
 	}
 
 	router.HandleFunc("GET /{hash}", handler.GoTo())

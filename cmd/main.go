@@ -5,6 +5,7 @@ import (
 	"go/http/configs"
 	"go/http/internal/auth"
 	"go/http/internal/link"
+	"go/http/internal/stat"
 	"go/http/internal/user"
 	"go/http/pkg/db"
 	"go/http/pkg/middleware"
@@ -19,6 +20,7 @@ func main() {
 	// Repositories
 	linkRepository := link.NewLinkRepository(db)
 	userRepository := user.NewUserRepository(db)
+	statRepository := stat.NewStatRepository(db)
 
 	// Services
 	authService := auth.NewAuthService(userRepository)
@@ -30,6 +32,7 @@ func main() {
 	})
 	link.NewLinkHandler(router, link.LinkHandlerDeps{
 		LinkRepository: linkRepository,
+		StatRepository: statRepository,
 		Config:         conf,
 	})
 
