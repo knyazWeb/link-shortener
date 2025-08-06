@@ -31,7 +31,6 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	router.Handle("PATCH /link/{id}", middleware.IsAuthed(handler.Update(), deps.Config))
 	router.HandleFunc("DELETE /link/{id}", handler.Delete())
 	router.Handle("GET /link", middleware.IsAuthed(handler.GetAll(), deps.Config))
-
 }
 
 func (handler *LinkHandler) Update() http.HandlerFunc {
@@ -54,13 +53,11 @@ func (handler *LinkHandler) Update() http.HandlerFunc {
 			Url:  body.Url,
 			Hash: body.Hash,
 		})
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		response.Json(w, result, http.StatusCreated)
-
 	}
 }
 
@@ -96,7 +93,6 @@ func (handler *LinkHandler) GoTo() http.HandlerFunc {
 		hash := r.PathValue("hash")
 
 		link, err := handler.LinkRepository.FindLinkByHash(hash)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -129,7 +125,6 @@ func (handler *LinkHandler) Delete() http.HandlerFunc {
 		}
 
 		response.Json(w, nil, http.StatusOK)
-
 	}
 }
 
@@ -153,6 +148,5 @@ func (handler *LinkHandler) GetAll() http.HandlerFunc {
 			Links: links,
 			Count: count,
 		}, http.StatusOK)
-
 	}
 }
